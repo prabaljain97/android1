@@ -1,0 +1,177 @@
+{
+  "name": "Root",
+  "children": [
+    {
+      "name": "Front-end",
+      "children": [
+        {
+          "name": "Website",
+          "children": [
+            {
+              "name": "AIDemos",
+              "children": [
+                { "name": "Content Analyzer",
+                  "url": "aidemos.taskhuman.com/app2",
+                  "dependsOn": ["Content Analyzer API"]
+                   },
+                { "name": "AI Suggestions" ,
+                  "url": "aidemos.taskhuman.com/app3",
+                  "dependsOn": ["Suggestions API"]
+                  },
+                { "name": "Entity Recognition" ,
+                  "url": "aidemos.taskhuman.com/entity",
+                  "dependsOn": ["Entity Recognition API"]
+                  },
+                { "name": "Search - TFIDF" ,
+                  "url": "http://aidemos.taskhuman.com/wikisearch1",
+                  "dependsOn": ["Search API - TFIDF"]
+                  },
+                { "name": "Search - Word2Vec" ,
+                  "url": "http://aidemos.taskhuman.com/wikisearch2",
+                  "dependsOn": ["Search API - Word2Vec"]
+                  },
+                { "name": "Search - Ensemble", 
+                  "url": "http://aidemos.taskhuman.com/wikisearch",
+                  "dependsOn": ["Search API - Ensemble"]
+                }
+              ],
+              "technos" : ["NGINX" , "uWSGI", "Flask" ,"Plotly" , "Dash", "Pandas", "numpy"],
+              "host": { "AWS EC2": ["ec2-18-219-77-0.us-east-2.compute.amazonaws.com"] }
+            },
+            {
+              "name": "Corp Site",
+              "children": [
+                { "name": "Taskhuman Skills" ,
+                  "dependsOn": ["Suggestions API"]
+                  },
+                { "name": "Taskhuman Prediction",
+                  "dependsOn": ["Search API"] 
+                },
+                { "name": "Taskhuman Categories",
+                  "dependsOn": ["Categories API"] 
+              }
+              ],
+              "url": "www.taskhuman.com"
+            }
+          ]
+        },
+        {
+          "name": "Mobile",
+          "children": [
+            {
+              "name": "iOS app",
+              "children": [
+                { "name": "User Search" }
+              ],
+              "technos": ["Objective-C"]
+            },
+            {
+              "name": "Android app",
+              "children": [
+                { "name": "User Search" }
+              ],
+              "technos": ["Android"]
+            }
+          ],
+          "dependsOn": ["Search API"]
+        }
+      ]
+    },
+    {
+      "name": "API Services",
+      "children": [
+        { 
+          "name": "Analyze API's",
+          "children": [
+            { "name": "Topics - API Health",
+              "url": "http://aitopics.taskhuman.com/health"
+            },
+            { "name": "Text Analyzer",
+              "url": "http://aitopics.taskhuman.com/texttopics",
+              "dependsOn": ["TextRazor API"]
+          },
+            { "name": "URL Analyzer",
+              "url": "http://aitopics.taskhuman.com/urltopics",
+              "dependsOn": ["TextRazor API"]
+          }
+          ],
+          "url": "http://aitopics.taskhuman.com/health",
+          "technos": ["Flask", "uWSGI", "NGINX"],
+          "host": { "AWS EC2": ["ec2-18-188-245-95.us-east-2.compute.amazonaws.com"] }
+        },
+        { 
+          "name": "Suggestions API",
+          "dependsOn": ["Wikipedia APIs"],
+          "url": "http://aitopics.taskhuman.com/neighbours",
+          "technos": ["Flask", "uWSGI", "NGINX", "Wikipedia-API"],
+          "host": { "AWS EC2": ["ec2-18-188-245-95.us-east-2.compute.amazonaws.com"] }
+        },
+        { 
+          "name": "Categories API",
+          "url": "http://aitopics.taskhuman.com/neighbours/categories",
+          "technos": ["Flask", "RDS", "mysql", "Wikipedia-API"],
+          "host": { "AWS EC2": ["ec2-18-218-1-178.us-east-2.compute.amazonaws.com"] }
+        },
+        { 
+          "name": "Search API's",
+          "children": [
+            { "name": "TFIDF",
+              "url": "http://aisearch.taskhuman.com/predict1"
+            },
+            { "name": "Word2Vec",
+              "url": "http://aisearch.taskhuman.com/predict2"
+          },
+            { "name": "Ensemble",
+              "children": [
+                { "name": "Frequency based",
+                  "dependsOn": ["Search - TFIDF"] 
+                  },
+                { "name": "Vector based" ,
+                  "dependsOn": ["Search - Word2Vec"]
+                },
+                { "name": "Search Synonyms" ,
+                  "dependsOn": ["FastText"]
+                }
+              ],
+                  "url": "http://aitopics.taskhuman.com/wikisearch",
+                  "technos": ["fasttext", "word2vec", "scikit-learn", "RDS", "mysql", "Wikipedia-API"]              }
+          ],
+          "host": { "AWS EC2": ["ec2-18-218-1-178.us-east-2.compute.amazonaws.com"] }
+        }
+      ]
+    },
+    {
+      "name": "Back-end",
+      "children": [
+        {
+          "name": "Data Services",
+          "children": [
+            { "name": "Spreadsheets",
+              "dependsOn": ["gspread", "google spreadsheets"] 
+              },
+            { "name": "Database" ,
+              "dependsOn": ["mysql", "mysql.connector"]
+            }
+          ],
+          "technos": ["mysql" , "google spreadsheets"],
+          "host": { "AWS EC2": ["ec2-18-218-1-178.us-east-2.compute.amazonaws.com"] }
+        },
+        {
+          "name": "Search Services",
+          "technos": ["elasticsearch"],
+          "host": { "AWS EC2": ["ec2-18-218-1-178.us-east-2.compute.amazonaws.com"] }
+        },
+        {
+          "name": "Queuing Services",
+          "technos": ["Redis Queue (RQ)"],
+          "host": { "AWS EC2": ["ec2-18-218-1-178.us-east-2.compute.amazonaws.com"] }
+        },
+        {
+          "name": "Scheduling Services",
+          "technos": ["apsscheduler", "supervisord"],
+          "host": { "AWS EC2": ["ec2-18-218-1-178.us-east-2.compute.amazonaws.com"] }
+        }
+      ]
+    }
+  ]
+}
